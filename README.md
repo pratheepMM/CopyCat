@@ -5,6 +5,13 @@
 git clone https://github.com/pratheepMM/CopyCat.git
 ```
 - Open the project folder with your favorite editor
+- Execute the following command by replacing your Gmail ID and Gmail Password  
+```shell
+mkdir Credentials && cd Credentials
+touch credentials.txt
+echo "YOUR_GMAIL_ID
+YOUR_GMAIL_PASSWORD" > credentials.txt
+```
 - Run the Main.java with Java v14 and above
 
 ### Supported in
