@@ -229,7 +229,7 @@ public class Main {
         loadFromPage(from);
         HashMap<String,String> answers = getContents();
         putAnswers(to,answers);
-        submit();
+        //submit();
     }
 }
 
