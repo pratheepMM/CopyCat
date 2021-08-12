@@ -8,6 +8,7 @@ import org.openqa.selenium.support.ui.Wait;
 import java.io.*;
 import java.time.Duration;
 import java.util.HashMap;
+
 import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
@@ -16,15 +17,15 @@ public class Main {
 
     static Wait<WebDriver> wait ;
     static WebDriver driver;
-    static String cookieFileName = "Credentials/cookies.ser";
+    static String cookieFileName = "Credentials/.cookies.ser";
     static String defaultSite = "https://google.com";
     static String credentialsFileName = "/home/pratheep/Projects/IdeaProjects/CopyCat/Credentials/credentials.txt";
-    static String browserLocation = "/home/pratheep/Projects/IdeaProjects/CopyCat/Driver/chromedriver";
-    static String braveBinary = "/usr/bin/brave-browser";
+    static String driverLocation = "/home/pratheep/Projects/IdeaProjects/CopyCat/Driver/chromedriver";
+    static String browserBinary = "/usr/bin/brave-browser";
 
     static void setDriver(){
-        System.setProperty("webdriver.chrome.driver",browserLocation);
-        ChromeOptions options = new ChromeOptions().setBinary(braveBinary);
+        System.setProperty("webdriver.chrome.driver",driverLocation);
+        ChromeOptions options = new ChromeOptions().setBinary(browserBinary);
         driver =  new ChromeDriver(options);
         wait = new FluentWait<>(driver)
                 .withTimeout(Duration.ofSeconds(5))
@@ -152,7 +153,6 @@ public class Main {
                         if(icon.getAttribute("aria-label").equals("Correct")){
                             String answer = option.findElement(By.cssSelector(answerCssSelector)).getText();
                             map.put(question,answer);
-                            System.out.println(question+" Answer : "+answer);
                             is = true;
                             break;
                         }
@@ -168,7 +168,6 @@ public class Main {
                         String correctAnswerCssSelector = "span[class='docssharedWizToggleLabeledLabelText exportLabel freebirdFormviewerViewItemsRadioLabel']";
                         String answer = outerCorrectAnswer.findElement(By.cssSelector(correctAnswerCssSelector)).getText();
                         map.put(question,answer);
-                        System.out.println(question+" Answer : "+answer);
                     }
                     catch(Exception ignored){}
                 }
@@ -189,30 +188,29 @@ public class Main {
             }
             return list1;
         });
-        System.out.println(list);
         String questionCssSelector = "div[class='freebirdFormviewerComponentsQuestionBaseTitle exportItemTitle freebirdCustomFont']";
         String optionsCssSelector = "div[class='freebirdFormviewerComponentsQuestionRadioChoice freebirdFormviewerComponentsQuestionRadioOptionContainer']";
         for(WebElement element : list){
             try {
                 String question = element.findElement(By.cssSelector(questionCssSelector)).getText();
-                System.out.println(question);
                 String answer = map.get(question);
                 if (answer == null)
-                    break;
+                    continue;
                 List<WebElement> options = element.findElements(By.cssSelector(optionsCssSelector));
                 for(WebElement option : options){
-                    String optionValueCssSelector = "span[class='docssharedWizToggleLabeledLabelText exportLabel freebirdFormviewerComponentsQuestionRadioLabel']";
-                    WebElement optionElement = option.findElement(By.cssSelector(optionValueCssSelector));
-                    String optionValue = optionElement.getText();
-                    if(optionValue.equals(answer)){
-                        WebElement parent = option.findElement(By.xpath("./.")).findElement(By.cssSelector("div[class='appsMaterialWizToggleRadiogroupElContainer exportContainerEl  docssharedWizToggleLabeledControl freebirdThemedRadio freebirdThemedRadioDarkerDisabled']"));
-                        parent.click();
-                        System.out.println(parent.getAttribute("class"));
-                        break;
+                    try {
+                        String optionValueCssSelector = "span[class='docssharedWizToggleLabeledLabelText exportLabel freebirdFormviewerComponentsQuestionRadioLabel']";
+                        WebElement optionElement = option.findElement(By.cssSelector(optionValueCssSelector));
+                        String optionValue = optionElement.getText();
+                        if (optionValue.equals(answer)) {
+                            WebElement parent = option.findElement(By.xpath("./.")).findElement(By.cssSelector("div[class='appsMaterialWizToggleRadiogroupElContainer exportContainerEl  docssharedWizToggleLabeledControl freebirdThemedRadio freebirdThemedRadioDarkerDisabled']"));
+                            parent.click();
+                            break;
+                        }
                     }
+                    catch (Exception ignore){}
                 }
-            }catch(Exception ignore){
-            }
+            }catch(Exception ignore){}
         }
     }
 
@@ -224,15 +222,14 @@ public class Main {
     public static void main(String[] args) throws Exception{
         Scanner sc = new Scanner(System.in);
         System.out.println("Enter the response URL of a google form : ");
-        String from = sc.nextLine();
+        String from = sc.nextLine().strip();
         System.out.println("Enter the new URL for the google form : ");
-        String to = sc.nextLine();
+        String to = sc.nextLine().strip();
         setDriver();
         loadFromPage(from);
         HashMap<String,String> answers = getContents();
         putAnswers(to,answers);
         submit();
-
     }
 }
 
