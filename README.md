@@ -7,8 +7,7 @@ git clone https://github.com/pratheepmm/CopyCat.git
 - Open the project folder with your favorite editor
 - Execute the following command by replacing your Gmail ID and Gmail Password  
 ```shell
-mkdir Credentials && cd Credentials
-touch credentials.txt
+mkdir Credentials ; cd Credentials
 echo "YOUR_GMAIL_ID
 YOUR_GMAIL_PASSWORD" > credentials.txt
 ```
