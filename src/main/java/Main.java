@@ -1,5 +1,6 @@
 import com.google.common.base.Function;
 import org.openqa.selenium.*;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.FluentWait;
@@ -7,11 +8,7 @@ import org.openqa.selenium.support.ui.Wait;
 
 import java.io.*;
 import java.time.Duration;
-import java.util.HashMap;
-
-import java.util.List;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
 
 public class Main {
 
@@ -19,23 +16,52 @@ public class Main {
     static WebDriver driver;
     static String cookieFileName = "Credentials/.cookies.ser";
     static String defaultSite = "https://google.com";
-    static String credentialsFileName = "/home/pratheep/Projects/IdeaProjects/CopyCat/Credentials/credentials.txt";
-    static String driverLocation = "/home/pratheep/Projects/IdeaProjects/CopyCat/Driver/chromedriver";
-    static String browserBinary = "/usr/bin/brave-browser";
+    static String credentialsFileName = "./Credentials/credentials.txt";
+    static String driverLocation = "./Driver/chromedriver-linux-";
+    static String braveBrowserBinary = "/usr/bin/brave-browser";
+    static String windows = "windows";
+    static String linux = "linux";
+    static String mac = "mac";
+
+    static{
+        String os = System.getProperty("os.name").toLowerCase();
+        if(os.startsWith(windows)){
+            driverLocation+="win.exe";
+        }
+        else if(os.startsWith(linux)){
+            driverLocation+="linux";
+        }
+        else if(os.startsWith(mac)){
+            driverLocation+="mac";
+        }
+    }
 
     static void setDriver(){
         System.setProperty("webdriver.chrome.driver",driverLocation);
-        ChromeOptions options = new ChromeOptions().setBinary(browserBinary);
-        driver =  new ChromeDriver(options);
+        if(isBraveBrowserAvailable()) {
+            ChromeOptions options = new ChromeOptions().setBinary(braveBrowserBinary);
+            driver = new ChromeDriver(options);
+        }
+        else{
+            driver = new ChromeDriver();
+        }
         wait = new FluentWait<>(driver)
                 .withTimeout(Duration.ofSeconds(5))
                 .pollingEvery(Duration.ofSeconds(1))
                 .ignoring(NoSuchElementException.class);
     }
 
+    static boolean isBraveBrowserAvailable(){
+        File bravePath = new File(braveBrowserBinary);
+        return bravePath.exists();
+    }
+
     static String[] getCredentials() throws Exception{
         String[] credentials = new String[2];
         File fileName = new File(credentialsFileName);
+        if(!fileName.exists()){
+            throw new Exception("No file found Credentials/credentials.txt");
+        }
         BufferedReader br = new BufferedReader(new FileReader(fileName));
         credentials[0] = br.readLine();
         credentials[1] = br.readLine();
@@ -85,12 +111,11 @@ public class Main {
             login(credentials);
             Thread.sleep(5000);
             saveCookies();
-            driver.get(from);
         }
         else{
             loadCookies(cookies);
-            driver.get(from);
         }
+        driver.get(from);
     }
 
     static Set<Cookie> getCookies() {
@@ -108,8 +133,10 @@ public class Main {
     static void saveCookies() throws Exception{
         Set<Cookie> cookies = driver.manage().getCookies();
         File file = new File(cookieFileName);
-        if(file.exists()){
-            file.createNewFile();
+        if(!file.exists()){
+            if(!file.createNewFile()){
+                return;
+            }
         }
         FileOutputStream fileOutputStream = new FileOutputStream(file);
         ObjectOutputStream outputStream = new ObjectOutputStream(fileOutputStream);

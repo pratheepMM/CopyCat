@@ -2,7 +2,7 @@
 
 - clone the repository
 ```shell
-git clone https://github.com/pratheepMM/CopyCat.git
+git clone https://github.com/pratheepmm/CopyCat.git
 ```
 - Open the project folder with your favorite editor
 - Execute the following command by replacing your Gmail ID and Gmail Password  
