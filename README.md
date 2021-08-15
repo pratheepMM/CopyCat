@@ -13,6 +13,6 @@ YOUR_GMAIL_PASSWORD" > credentials.txt
 ```
 - Run the Main.java with Java v14 and above
 
-### Supported in
+### Tested in
 
-- Currently, works at Linux with brave browser
+- Linux Mint
