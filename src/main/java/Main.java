@@ -16,8 +16,8 @@ public class Main {
     static WebDriver driver;
     static String cookieFileName = "Credentials/.cookies.ser";
     static String defaultSite = "https://google.com";
-    static String credentialsFileName = "./Credentials/credentials.txt";
-    static String driverLocation = "./Driver/chromedriver-linux-";
+    static String credentialsFileName = "Credentials/credentials.txt";
+    static String driverLocation = "Driver/chromedriver-";
     static String braveBrowserBinary = "/usr/bin/brave-browser";
     static String windows = "windows";
     static String linux = "linux";
